@@ -156,7 +156,7 @@ To edit the yaml file of a pod, run:
 kubectl edit pod <pod-name>
 ```
 
-## Let's deploy a pod using yaml
+# Let's deploy a pod using yaml
 Let's run
 ```
 kubectl run nginx-yaml --image=nginx --dry-run=client -o yaml
@@ -207,3 +207,99 @@ Output:
 pod/nginx-yaml created
 ```
 With `kubectl get pods` we should see the new pod `nginx-yaml` ist up and running.
+
+To delete a pod run:
+```
+kubectl delete pod <pod-name>
+```
+
+To interact with a pod, run:
+```
+kubectl exec -it <pod-name> -- /bin/<bash|sh> 
+```
+
+# Deployments
+## Deployment
+### RollingUpdate Strategy
+Let's deploy for instance 10 pods
+```
+k create deploy --image=http --replicas=10 --dry-run=client -o yaml > httpd.yaml
+```
+`httpd-recreate.yaml`
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: httpd-repeat
+  name: httpd-repeat
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: httpd-repeat
+  template:
+    metadata:
+      labels:
+        app: httpd-repeat
+    spec:
+      containers:
+      - image: httpd:alpine3.19
+        name: httpd
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+```
+With the watch command we can see how the pods are being deployed:
+```
+watch -n 1 "kubectl get pods"
+```
+Now let's deploy:
+```
+k apply -f httpd.yaml
+```
+Now with `k get pods` we should all 11 pods running:
+
+![alt text](images/11_pods.PNG)
+
+11 because ``strategy`` > ``rollingUpdate`` > ``maxSurge`` is set to ``1``.
+
+### Recreate Strategy
+`httpd-rollingUpdate.yaml`
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: httpd-repeat
+  name: httpd-repeat
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: httpd-repeat
+  template:
+    metadata:
+      labels:
+        app: httpd-repeat
+    spec:
+      containers:
+      - image: httpd:alpine3.19
+        name: httpd
+  strategy: 
+    type: Recreate
+
+```
+To delete a deployment, run:
+```
+k delete deployment <deployment-name>
+```
+To delete pod, run:
+```
+k delete pod <pod-name>
+```
+
+## Namespaces
+## Mealie
