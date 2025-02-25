@@ -302,4 +302,28 @@ k delete pod <pod-name>
 ```
 
 ## Namespaces
-## Mealie
+To create a namespace, run
+```
+k create namespace <namespace-name>
+```
+To pipe the content directly into a yaml file, run:
+```
+k create ns <namespace-name> --dry-run=client -o yaml > namespace.yaml
+```
+To delete a namespace, run:
+```
+k delete ns <namespace-name>
+```
+After creating a namespace, run a pod in it:
+```
+k run <pod-name> --image=<image-name> --namespace <namespace-name>
+```
+To checkout the current cluster we are working on:
+```
+k config current-context
+```
+Set context and namespace:
+```
+k config set-context --current --namespace=<namespace-name>
+```
+## Namespace ``devops``
