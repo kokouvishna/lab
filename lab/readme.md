@@ -339,7 +339,28 @@ Specify the ns `mealie` in the yaml file. From the mealie website documentation,
 We also change the name of the image to `mealie`.
 `deployment.yaml`
 ```
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mealie
+  name: mealie
+  namespace: mealie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mealie
+  template:
+    metadata:
+      labels:
+        app: mealie
+    spec:
+      containers:
+      - image: ghcr.io/mealie-recipes/mealie:v2.6.0
+        name: mealie
+        ports:
+          - containerPort: 9000
 ```
 With ` k get pods` we shoud see `mealie-<some>-<number>` running.
 You can describe the new pod with:
@@ -373,3 +394,6 @@ Handling connection for 9000
 Handling connection for 9000
 Handling connection for 9000
 ```
+
+To see what plugin the container network interface is running, first we log into the pod with `rdctl shell`, navigate to `cd /etc/cni/net.d`, and display this file `cat 10-flannel.conflist`.
+There we can see the container network version `cniVersion` and the  plugin type `flannel`.
