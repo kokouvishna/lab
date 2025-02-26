@@ -326,4 +326,50 @@ Set context and namespace:
 ```
 k config set-context --current --namespace=<namespace-name>
 ```
-## Namespace ``devops``
+
+## Mealie
+- https://docs.mealie.io/documentation/getting-started/installation/installation-checklist/
+- https://github.com/mealie-recipes/mealie
+Create a ns `mealie`. 
+Deploy a nginx pod in it:
+```
+k create deployment mealie --image=nginx --dry-run=client -o yaml > deployment.yaml
+```
+Specify the ns `mealie` in the yaml file. From the mealie website documentation, add the port and image.
+We also change the name of the image to `mealie`.
+`deployment.yaml`
+```
+
+```
+With ` k get pods` we shoud see `mealie-<some>-<number>` running.
+You can describe the new pod with:
+```
+k describe pod <pod-name>
+```
+Let's forward the port so that we can access it the mealie app from a webbrowser:
+```
+ k port-forward pods/mealie-f6c7f4648-v7b8w 9000
+ ```
+ Output:
+```
+Forwarding from 127.0.0.1:9000 -> 9000
+Forwarding from [::1]:9000 -> 9000
+```
+Copy and paste `127.0.0.1:9000` into a webbrowser, we should now land on the mealie app.
+
+![screenshot](images/mealie_app.PNG)
+
+Try to login with the credentials provided by the webapp.
+
+![screenshot](images/1st_login.PNG)
+
+When klicking around on the webapp, your console should also lokk like this:
+```
+Forwarding from 127.0.0.1:9000 -> 9000
+Forwarding from [::1]:9000 -> 9000
+Handling connection for 9000
+Handling connection for 9000
+Handling connection for 9000
+Handling connection for 9000
+Handling connection for 9000
+```
